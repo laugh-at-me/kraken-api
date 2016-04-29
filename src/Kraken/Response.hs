@@ -11,7 +11,7 @@ import GHC.Generics
 
 data Response a = Response
   { error :: [String]
-  , result :: a
+  , result :: Maybe a
   } deriving (Show, Generic)
 
 instance FromJSON a => FromJSON (Response a)

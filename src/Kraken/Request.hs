@@ -4,6 +4,7 @@ module Kraken.Request
        (
          Time(..),
          Assets(..),
+         Balance(..),
          Request(..),
        ) where
 
@@ -31,8 +32,14 @@ data Assets = Assets
   , asset :: Maybe [String] } deriving Generic
 instance ToURLEncoded Assets
 
+data Balance = Balance deriving Generic
+instance ToURLEncoded Balance
+
 instance Request Assets where
   urlPart _ = "Assets"
 
 instance Request Time where
   urlPart _ = "Time"
+
+instance Request Balance where
+  urlPart _ = "Balance"

@@ -3,10 +3,13 @@
 module Kraken.Result
        (
          Time(..),
+         Asset(..),
          Assets(..),
+         Balance(..),
          Kraken.Result.Result(..)
        ) where
 
+import Data.Map
 import Data.Text
 import Data.Aeson
 import GHC.Generics
@@ -18,15 +21,19 @@ data Time = Time
 
 instance FromJSON Time
 
-data Assets = Assets
+data Asset = Asset
   { altname :: String
   , aclass :: String
   , decimals :: Integer
   , display_decimals :: Integer } deriving (Show, Generic)
 
-instance FromJSON Assets
+instance FromJSON Asset
+
+type Assets = Map String Asset
+
+type Balance = Map String String
 
 class FromJSON a => Result a
 
-instance Kraken.Result.Result Assets
+instance Kraken.Result.Result Asset
 instance Kraken.Result.Result Time
