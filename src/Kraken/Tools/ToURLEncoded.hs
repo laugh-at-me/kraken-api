@@ -1,6 +1,6 @@
 {-# LANGUAGE DefaultSignatures, TypeOperators, FlexibleContexts, FlexibleInstances #-}
 
-module ToURLEncoded (ToURLEncoded(encode)) where
+module Kraken.Tools.ToURLEncoded (ToURLEncoded(encode)) where
 
 import GHC.Generics
 import Data.URLEncoded
@@ -19,6 +19,9 @@ instance (GToURLEncoded a, GToURLEncoded b) => GToURLEncoded (a :*: b) where
 
 instance (GToURLEncoded a) => GToURLEncoded (M1 i c a) where
   gencode (M1 a) = gencode a
+
+instance GToURLEncoded U1 where
+  gencode U1 = empty
 
 instance {-# OVERLAPPING #-} (Selector c, URLShow a) => GToURLEncoded (M1 S c (K1 i (Maybe a))) where
   gencode m1@(M1 (K1 a)) = selName m1 %=? a
