@@ -74,4 +74,5 @@ main :: IO ()
 main = do
   ((public $ Request.Assets { Request.info = Nothing, Request.aclass = Nothing, Request.asset = Nothing })::(IO (Either [String] Result.Assets))) >>= print
   ((public $ Request.Time)::(IO (Either [String] (Result.Time)))) >>= print
+  ((public $ Request.OHLC { Request.pair = "XXBTZEUR", Request.interval = Nothing, Request.since = Nothing })::(IO (Either [String] Result.OHLC))) >>= print
   ((private "api" "private" $ Request.Balance)::(IO (Either [String] Result.Balance))) >>= print

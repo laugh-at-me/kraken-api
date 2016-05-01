@@ -5,7 +5,8 @@ module Kraken.Request
          Time(..),
          Assets(..),
          Balance(..),
-         Request(..),
+         OHLC(..),
+         Request(..)
        ) where
 
 import qualified Kraken.Result as Result
@@ -35,6 +36,12 @@ instance ToURLEncoded Assets
 data Balance = Balance deriving Generic
 instance ToURLEncoded Balance
 
+data OHLC = OHLC
+  { pair :: String
+  , interval :: Maybe Integer
+  , since :: Maybe Integer } deriving Generic
+instance ToURLEncoded OHLC
+
 instance Request Assets where
   urlPart _ = "Assets"
 
@@ -43,3 +50,6 @@ instance Request Time where
 
 instance Request Balance where
   urlPart _ = "Balance"
+
+instance Request OHLC where
+  urlPart _ = "OHLC"
