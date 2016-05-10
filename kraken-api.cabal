@@ -56,7 +56,8 @@ library
                        Kraken.Result
   
   -- Modules included in this library but not exported.
-  -- other-modules:       
+  other-modules:       Kraken.Response,
+                       Kraken.Tools.ToURLEncoded
   
   -- LANGUAGE extensions used by modules in this package.
   other-extensions:    OverloadedStrings, DeriveGeneric, DefaultSignatures, TypeOperators, FlexibleContexts, FlexibleInstances

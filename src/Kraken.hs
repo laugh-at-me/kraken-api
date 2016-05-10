@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings, DeriveGeneric, FlexibleInstances, MultiParamTypeClasses, ScopedTypeVariables, PackageImports #-}
 
-module Kraken () where
+module Kraken (public, private) where
 
 import qualified Kraken.Request as Request
 import qualified Kraken.Result as Result
@@ -9,6 +9,7 @@ import qualified Kraken.Tools.ToURLEncoded as URL
 import qualified Data.ByteString.Base64 as Base64
 import qualified "cryptohash" Crypto.Hash as CryptoHash
 import qualified Data.ByteString as B
+import Data.List
 import System.IO
 import Network.HTTP.Conduit
 import Control.Monad (liftM)
@@ -20,29 +21,29 @@ import Data.String
 import Data.Byteable
 import Data.Time.Clock.POSIX
 
-public :: (Request.Request a, FromJSON b) => a -> IO (Either [String] b)
+public :: (Request.Request a, FromJSON b) => a -> IO b
 public request = do
   manager <- liftIO $ newManager tlsManagerSettings
   req' <- liftIO $ parseUrl ("https://api.kraken.com/0/public/" ++ (Request.urlPart request))
   req <- return (req' { method = "POST", requestBody = RequestBodyBS (fromString $ export $ URL.encode request)})
   res <- httpLbs req manager
   case (eitherDecode $ responseBody res) of
-    Left error -> return (Left [error])
-    Right response -> return
+    Left error -> fail (intercalate "\n" [error])
+    Right response ->
       (
         if Prelude.null e then
            case Response.result response of
-             Nothing -> Left []
-             Just r -> Right r
-        else Left e
+             Nothing -> fail "Empty result"
+             Just r -> return r
+        else fail (intercalate "\n" e)
       )
       where e = (Response.error response)
 
-private :: (Request.Request a, FromJSON b) => String -> String -> a -> IO (Either [String] b)
+private :: (Request.Request a, FromJSON b) => String -> String -> a -> IO b
 private apiKey privateKey request = do
   privateKey' <- return (Base64.decode (fromString privateKey))
   case privateKey' of
-    Left e -> return $ Left [e]
+    Left e -> fail e
     Right private ->
       let
         path = "/0/private/" ++ (Request.urlPart request)
@@ -59,20 +60,13 @@ private apiKey privateKey request = do
           req <- return (req' { method = "POST", requestBody = RequestBodyBS $ fromString postData, requestHeaders = headers })
           res <- httpLbs req manager
           case (eitherDecode $ responseBody res) of
-            Left error -> return (Left [error])
-            Right response -> return
+            Left error -> fail error
+            Right response ->
               (
                 if Prelude.null e then
                   case Response.result response of
-                    Nothing -> Left []
-                    Just r -> Right r
-                else Left e
+                    Nothing -> fail "Empty result"
+                    Just r -> return r
+                else fail (intercalate "\n" e)
               )
               where e = (Response.error response)
-
-main :: IO ()
-main = do
-  ((public $ Request.Assets { Request.info = Nothing, Request.aclass = Nothing, Request.asset = Nothing })::(IO (Either [String] Result.Assets))) >>= print
-  ((public $ Request.Time)::(IO (Either [String] (Result.Time)))) >>= print
-  ((public $ Request.OHLC { Request.pair = "XXBTZEUR", Request.interval = Nothing, Request.since = Nothing })::(IO (Either [String] Result.OHLC))) >>= print
-  ((private "api" "private" $ Request.Balance)::(IO (Either [String] Result.Balance))) >>= print
