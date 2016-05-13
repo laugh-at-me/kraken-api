@@ -39,7 +39,7 @@ instance ToURLEncoded Balance
 data OHLC = OHLC
   { pair :: String
   , interval :: Maybe Integer
-  , since :: Maybe Integer } deriving Generic
+  , since :: Maybe String } deriving Generic
 instance ToURLEncoded OHLC
 
 instance Request Assets where

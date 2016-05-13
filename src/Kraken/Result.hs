@@ -7,6 +7,7 @@ module Kraken.Result
          Assets(..),
          Balance(..),
          OHLC(..),
+         OHLCValue(..),
          Kraken.Result.Result(..)
        ) where
 
