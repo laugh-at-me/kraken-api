@@ -8,6 +8,9 @@ module Kraken.Result
          Balance(..),
          OHLC(..),
          OHLCValue(..),
+         Depth(..),
+         DepthValue(..),
+         DepthElementValue(..),
          Kraken.Result.Result(..)
        ) where
 
@@ -59,6 +62,19 @@ data OHLC = OHLC
   { last :: Int
   , values :: M.Map String (M.Map Int OHLCValue) } deriving Show
 
+data DepthElementTuple = DepthElementTuple Double Double Integer
+
+data DepthElementValue = DepthElementValue
+  { price :: Double,
+    depthVolume :: Double,
+    timestamp :: Integer } deriving Show
+
+data DepthValue = DepthValue
+  { asks :: [ DepthElementValue ]
+  , bids :: [ DepthElementValue ] } deriving (Show, Generic)
+
+newtype Depth = Depth (M.Map String DepthValue) deriving (Show, Generic)
+
 instance FromJSON OHLCTuple where
   parseJSON = withArray "OHLC tuple" $ \a ->
     case V.toList a of
@@ -77,3 +93,20 @@ instance FromJSON OHLC where
                        Prelude.foldr (\(OHLCTuple t o h l c vw vol co) r ->
                                        M.insert t (OHLCValue o h l c vw vol co) r) M.empty (a::[OHLCTuple]))) rest
     )
+
+instance FromJSON DepthElementTuple where
+  parseJSON = withArray "Depth element tuple" $ \a ->
+    case V.toList a of
+      [p, v, t] -> DepthElementTuple <$> parseQuotedDouble p <*> parseQuotedDouble v <*> parseJSON t
+      _ -> fail "[2 String's, Int] expected"
+    where
+      parseQuotedDouble = parseJSON >=> (return . read)
+
+instance FromJSON DepthElementValue where
+  parseJSON o =
+    do
+      (DepthElementTuple p v t) <- parseJSON o
+      return $ DepthElementValue p v t
+
+instance FromJSON DepthValue
+instance FromJSON Depth

@@ -53,6 +53,11 @@ library
   -- Modules exported by the library.
   exposed-modules:     Kraken,
                        Kraken.Request,
+                       Kraken.Request.Time,
+                       Kraken.Request.Assets,
+                       Kraken.Request.Depth,
+                       Kraken.Request.Balance,
+                       Kraken.Request.OHLC,
                        Kraken.Result
   
   -- Modules included in this library but not exported.
