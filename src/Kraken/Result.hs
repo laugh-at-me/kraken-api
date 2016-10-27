@@ -23,7 +23,7 @@ import Data.Aeson
 import GHC.Generics
 
 data Time = Time
-  { unixtime :: Integer
+  { unixtime :: Int
   , rfc1123 :: String
   } deriving (Show, Generic)
 
