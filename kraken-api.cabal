@@ -58,7 +58,14 @@ library
                        Kraken.Request.Depth,
                        Kraken.Request.Balance,
                        Kraken.Request.OHLC,
-                       Kraken.Result
+                       Kraken.Request.AddOrder,
+                       Kraken.Result,
+                       Kraken.Result.Time,
+                       Kraken.Result.Assets,
+                       Kraken.Result.Depth,
+                       Kraken.Result.Balance,
+                       Kraken.Result.OHLC,
+                       Kraken.Result.AddOrder
   
   -- Modules included in this library but not exported.
   other-modules:       Kraken.Response,

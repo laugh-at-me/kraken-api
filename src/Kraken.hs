@@ -21,10 +21,10 @@ import Data.String
 import Data.Byteable
 import Data.Time.Clock.POSIX
 
-public :: (Request.Request a, FromJSON b) => a -> IO b
+public :: (Request.Request a) => a -> IO (Request.Result a)
 public request = do
   manager <- liftIO $ newManager tlsManagerSettings
-  req' <- liftIO $ parseUrl ("https://api.kraken.com/0/public/" ++ (Request.urlPart request))
+  req' <- liftIO $ parseUrlThrow ("https://api.kraken.com/0/public/" ++ (Request.urlPart request))
   req <- return (req' { method = "POST", requestBody = RequestBodyBS (fromString $ export $ URL.encode request)})
   res <- httpLbs req manager
   case (eitherDecode $ responseBody res) of
@@ -39,7 +39,7 @@ public request = do
       )
       where e = (Response.error response)
 
-private :: (Request.Request a, FromJSON b) => String -> String -> a -> IO b
+private :: (Request.Request a) => String -> String -> a -> IO (Request.Result a)
 private apiKey privateKey request = do
   privateKey' <- return (Base64.decode (fromString privateKey))
   case privateKey' of
@@ -56,7 +56,7 @@ private apiKey privateKey request = do
           signature <- return $ Base64.encode $ toBytes $ CryptoHash.hmacGetDigest (((CryptoHash.hmac private $ B.concat [fromString path, hash]))::(CryptoHash.HMAC CryptoHash.SHA512))
           headers <- return [("API-Sign", signature), ("API-Key", api)]
           manager <- liftIO $ newManager tlsManagerSettings
-          req' <- liftIO $ parseUrl $ "https://api.kraken.com" ++ path
+          req' <- liftIO $ parseUrlThrow $ "https://api.kraken.com" ++ path
           req <- return (req' { method = "POST", requestBody = RequestBodyBS $ fromString postData, requestHeaders = headers })
           res <- httpLbs req manager
           case (eitherDecode $ responseBody res) of
