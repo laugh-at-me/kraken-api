@@ -23,8 +23,10 @@ instance (GToURLEncoded a) => GToURLEncoded (M1 i c a) where
 instance GToURLEncoded U1 where
   gencode U1 = empty
 
+withoutLastUnderscore i = if last i == '_' then init i else i
+
 instance {-# OVERLAPPING #-} (Selector c, URLShow a) => GToURLEncoded (M1 S c (K1 i (Maybe a))) where
-  gencode m1@(M1 (K1 a)) = selName m1 %=? a
+  gencode m1@(M1 (K1 a)) = withoutLastUnderscore (selName m1) %=? a
 
 instance {-# OVERLAPPING #-} (Selector c, URLShow a) => GToURLEncoded (M1 S c (K1 i a)) where
-  gencode m1@(M1 (K1 a)) = selName m1 %=? Just (urlShow a)
+  gencode m1@(M1 (K1 a)) = withoutLastUnderscore (selName m1) %=? Just (urlShow a)

@@ -3,7 +3,9 @@
 module Kraken.Request.AddOrder
        (
          AddOrder(..),
-         Type(..)
+         Type(..),
+         OrderType(..),
+         OrderFlag(..)
        ) where
 
 import qualified Kraken.Result.AddOrder as R
@@ -11,6 +13,7 @@ import Kraken.Request
 import Kraken.Tools.ToURLEncoded
 import Data.URLEncoded
 import Data.Char
+import Data.List
 import GHC.Generics
 
 data Type = Buy | Sell
@@ -36,13 +39,26 @@ data OrderType = Market |
 instance URLShow OrderType where
   urlShow = toSnake . show
 
+data OrderFlag = VIQC | FCIB | FCIQ | NOMPP | POST
+  deriving Show
+
+instance URLShow [OrderFlag] where
+  urlShow l =
+    let
+      l' = map (downcase . show) l
+    in
+      concat $ intersperse "," l'
+
 data AddOrder = AddOrder {
   pair :: String,
   type_ :: Type,
-  orderType :: OrderType,
+  ordertype :: OrderType,
   price :: Maybe Double,
   price2 :: Maybe Double,
-  leverage :: Maybe Int  
+  volume :: Double,
+  leverage :: Maybe Int,
+  oflags :: Maybe [OrderFlag],
+  validate :: Maybe Bool
   } deriving Generic
 
 splitR :: (Char -> Bool) -> String -> [String]
@@ -73,4 +89,3 @@ instance ToURLEncoded AddOrder
 instance Request AddOrder where
   type Result AddOrder = R.AddOrder
   urlPart _ = "AddOrder"
-
