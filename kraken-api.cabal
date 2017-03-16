@@ -10,7 +10,7 @@ name:                kraken-api
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.0
+version:             0.2.0.0
 
 -- A short (one-line) description of the package.
 synopsis:            An implementation of the API of the Kraken Bitcoin Exchange in Haskell.
@@ -47,7 +47,6 @@ extra-source-files:  README.md
 
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
-
 
 library
   -- Modules exported by the library.
