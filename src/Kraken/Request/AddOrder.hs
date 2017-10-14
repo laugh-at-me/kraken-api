@@ -47,7 +47,7 @@ instance URLShow [OrderFlag] where
     let
       l' = map (downcase . show) l
     in
-      concat $ intersperse "," l'
+      intercalate "," l'
 
 data AddOrder = AddOrder {
   pair :: String,
@@ -68,11 +68,11 @@ splitR p s =
     go :: Char -> String -> [String]
     go m s' = case break p s' of
       (b', [])     -> [ m:b' ]
-      (b', (x:xs)) -> ( m:b' ) : go x xs
+      (b', x:xs) -> ( m:b' ) : go x xs
   in case break p s of
     (b,  [])    -> [ b ]
-    ([], (h:t)) -> go h t
-    (b,  (h:t)) -> b : go h t
+    ([], h:t) -> go h t
+    (b,  h:t) -> b : go h t
 
 downcase :: String -> String
 downcase = map toLower

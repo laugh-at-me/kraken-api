@@ -1,5 +1,5 @@
-{-# LANGUAGE DeriveGeneric, FlexibleInstances, OverloadedStrings, TypeFamilies, FlexibleContexts #-}
-
+{-# LANGUAGE FlexibleInstances, OverloadedStrings, TypeFamilies,
+  FlexibleContexts #-}
 module Kraken.Request
        (
          Request(..)

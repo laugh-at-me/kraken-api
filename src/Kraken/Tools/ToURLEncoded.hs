@@ -10,10 +10,10 @@ class ToURLEncoded a where
   encode :: a -> URLEncoded
   default encode :: (Generic a, GToURLEncoded (Rep a)) => a -> URLEncoded
   encode = gencode . from
- 
+
 class GToURLEncoded f where
   gencode :: f a -> URLEncoded
- 
+
 instance (GToURLEncoded a, GToURLEncoded b) => GToURLEncoded (a :*: b) where
   gencode (a :*: b) = gencode a %& gencode b
 

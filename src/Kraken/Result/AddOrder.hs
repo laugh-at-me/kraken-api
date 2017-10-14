@@ -13,7 +13,7 @@ import GHC.Generics
 data Descr = Descr
   { order :: String
   , close :: Maybe String } deriving (Show, Generic)
-    
+
 data AddOrder = AddOrder
   { descr :: Descr
   , txid :: Maybe [Integer] } deriving (Show, Generic)

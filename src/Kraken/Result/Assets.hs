@@ -11,6 +11,7 @@ import qualified Data.Map as M
 import Data.Aeson
 import GHC.Generics
 
+{-# ANN Asset ("HLint: ignore Use camelCase" :: String) #-}
 data Asset = Asset
   { altname :: String
   , aclass :: String

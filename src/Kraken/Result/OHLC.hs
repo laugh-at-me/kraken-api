@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Kraken.Result.OHLC
        (
@@ -45,9 +45,9 @@ instance FromJSON OHLC where
     (
       do
         rest <- parseJSON $ Object $ HM.delete "last" o
-        return $ (M.map (\a ->
-                       Prelude.foldr (\(OHLCTuple t o h l c vw vol co) r ->
-                                       M.insert t (OHLCValue o h l c vw vol co) r) M.empty (a::[OHLCTuple]))) rest
+        return $ M.map (\a ->
+                           Prelude.foldr (\(OHLCTuple t o h l c vw vol co) r ->
+                                            M.insert t (OHLCValue o h l c vw vol co) r) M.empty (a::[OHLCTuple])) rest
     )
 
 instance Kraken.Result.Result OHLC
